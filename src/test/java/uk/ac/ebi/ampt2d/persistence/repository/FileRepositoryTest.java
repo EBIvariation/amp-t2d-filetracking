@@ -99,7 +99,7 @@ public class FileRepositoryTest {
         File updatedFile = updatedFiles.get(0);
         assertEquals(newName, updatedFile.getName());
         assertEquals(secondVcf.getHash(), updatedFile.getHash());
-        assertTrue(updatedFile.getCreatedDate().isAfter(created));
+        assertTrue(updatedFile.getCreatedDate().isEqual(created));
         assertTrue(updatedFile.getLastModifiedDate().isAfter(modified));
 
         // Delete file
