@@ -17,6 +17,15 @@ package uk.ac.ebi.ampt2d;
 
 public enum FileType {
     VCF,
-    BAM,
-    FATSQ
+    VCF_AGGREGATE,
+    README_FILE,
+    TABIX,
+    BED,
+    PHENOTYPE_FILE,
+    CRAM,
+    WIG,
+    GFF,
+    FASTA,
+    FASTQ,
+    OTHER
 }

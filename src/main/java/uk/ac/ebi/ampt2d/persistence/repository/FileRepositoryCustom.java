@@ -15,14 +15,10 @@
  */
 package uk.ac.ebi.ampt2d.persistence.repository;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.web.multipart.MultipartFile;
 
-import org.springframework.stereotype.Repository;
-import uk.ac.ebi.ampt2d.persistence.entities.File;
+import java.nio.file.Path;
 
-import java.util.List;
-
-@Repository
-public interface FileRepository extends PagingAndSortingRepository<File, String>, FileRepositoryCustom {
-    List<File> findByHash(String hash);
+public interface FileRepositoryCustom {
+    Path archive(MultipartFile file);
 }
