@@ -23,10 +23,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.ampt2d.FileType;
 import uk.ac.ebi.ampt2d.persistence.entities.File;
+import uk.ac.ebi.ampt2d.persistence.entities.SourceFilePath;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
@@ -45,9 +48,15 @@ public class FileRepositoryTest {
     public void setUp() throws Exception {
         fileRepository.deleteAll();
 
-        File vcf = new File("vcf_hash", "vcf", FileType.VCF, 15, null);
-        File bam = new File("bam_hash", "bam", FileType.BED, 20, null);
-        File fastq = new File("fatsq_hash", "fatsq", FileType.FASTQ, 100, null);
+        File vcf = new File("vcf_hash", "vcf", FileType.VCF, 15);
+        vcf.setSourceFilePaths(new HashSet<>(Collections.singletonList(new SourceFilePath(vcf, "/vcf/file/path"))));
+
+        File bam = new File("bam_hash", "bam", FileType.BED, 20);
+        bam.setSourceFilePaths(new HashSet<>(Collections.singletonList(new SourceFilePath(bam, "/bam/file/path"))));
+
+        File fastq = new File("fastq_hash", "fastq", FileType.FASTQ, 100);
+        fastq.setSourceFilePaths(
+                new HashSet<>(Collections.singletonList(new SourceFilePath(fastq, "/fastq/file/path"))));
 
         fileRepository.save(vcf);
         fileRepository.save(bam);
@@ -72,16 +81,23 @@ public class FileRepositoryTest {
         assertEquals("vcf", file.getName());
         assertNotNull(file.getCreatedDate());
         assertNotNull(file.getLastModifiedDate());
+
+        Set<SourceFilePath> sourceFilePaths = file.getSourceFilePaths();
+        assertNotNull(sourceFilePaths);
+        assertEquals("Did not get all source file paths", 1, sourceFilePaths.size());
+
+        SourceFilePath sourceFilePath = sourceFilePaths.iterator().next();
+        assertEquals("/vcf/file/path", sourceFilePath.getPath());
+        assertEquals(file, sourceFilePath.getFile());
+
         assertTrue(fileRepository.exists("vcf_hash"));
     }
 
     @Test
     public void testCRUD() {
         // Create a new file
-        File secondVcf = new File("new_vcf_hash", "vcf", FileType.VCF, 150, null);
-        File persistedFile = fileRepository.save(secondVcf);
-        LocalDateTime created = persistedFile.getCreatedDate();
-        LocalDateTime modified = persistedFile.getLastModifiedDate();
+        File secondVcf = new File("new_vcf_hash", "vcf", FileType.VCF, 150);
+        fileRepository.save(secondVcf);
 
         // Assert it was created
         List<File> foundFile = fileRepository.findByHash(secondVcf.getHash());
@@ -99,8 +115,6 @@ public class FileRepositoryTest {
         File updatedFile = updatedFiles.get(0);
         assertEquals(newName, updatedFile.getName());
         assertEquals(secondVcf.getHash(), updatedFile.getHash());
-        assertTrue(updatedFile.getCreatedDate().isEqual(created));
-        assertTrue(updatedFile.getLastModifiedDate().isAfter(modified));
 
         // Delete file
         fileRepository.delete(updatedFiles);
@@ -109,5 +123,5 @@ public class FileRepositoryTest {
         List<File> emptyFile = fileRepository.findByHash(secondVcf.getName());
         assertEquals(0, emptyFile.size());
     }
-    
+
 }

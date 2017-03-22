@@ -41,6 +41,7 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 public class File {
     public static final int MIN_FILE_HASH = 1;
+
     public static final int MAX_FILE_HASH = 128;
 
     @Id
@@ -55,7 +56,7 @@ public class File {
 
     private long size;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "file", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "file", fetch = FetchType.EAGER)
     private Set<SourceFilePath> sourceFilePaths;
 
     @CreatedDate
@@ -69,19 +70,17 @@ public class File {
     public File(String hash,
                 String name,
                 FileType type,
-                long size,
-                Set<SourceFilePath> sourceFilePaths) {
+                long size) {
         this.hash = hash;
         this.name = name;
         this.type = type;
         this.size = size;
-        this.sourceFilePaths = sourceFilePaths;
     }
 
     public File(java.io.File file, FileType type, String name) {
         try {
             this.hash = Files.hash(file, Hashing.sha384()).toString();
-        } catch ( IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         this.type = type;
@@ -131,7 +130,7 @@ public class File {
     }
 
     public void setSourceFilePaths(Set<SourceFilePath> sourceFilePaths) {
-        if(sourceFilePaths != null){
+        if (sourceFilePaths != null) {
             for (SourceFilePath sourceFilePath : sourceFilePaths) {
                 sourceFilePath.setFile(this);
             }
