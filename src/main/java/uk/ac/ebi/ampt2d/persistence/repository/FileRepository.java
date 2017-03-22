@@ -24,5 +24,6 @@ import java.util.List;
 
 @Repository
 public interface FileRepository extends PagingAndSortingRepository<File, String>, FileRepositoryCustom {
-    List<File> findByHash(String hash);
+    File findById(long id);
+    File findByHash(String hash);
 }

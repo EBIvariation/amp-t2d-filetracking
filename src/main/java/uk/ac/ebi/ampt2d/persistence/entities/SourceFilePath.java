@@ -43,7 +43,7 @@ public class SourceFilePath {
     private long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "hash")
+    @JoinColumn(name = "file_id")
     private File file;
 
     @Column(length = MAX_PATH, nullable = false)

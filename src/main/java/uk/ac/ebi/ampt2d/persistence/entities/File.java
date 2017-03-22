@@ -30,6 +30,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Size;
@@ -45,7 +46,10 @@ public class File {
     public static final int MAX_FILE_HASH = 128;
 
     @Id
-    @Column(length = MAX_FILE_HASH)
+    @GeneratedValue
+    private long id;
+
+    @Column(length = MAX_FILE_HASH, unique = true)
     @Size(min = MIN_FILE_HASH, max = MAX_FILE_HASH)
     private String hash;
 

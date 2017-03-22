@@ -33,7 +33,7 @@ import java.util.Set;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 /**
  * Testing the basic CRUD operations
@@ -66,18 +66,14 @@ public class FileRepositoryTest {
     @Test
     public void loadFiles() {
         List<File> files = (ArrayList<File>) fileRepository.findAll();
-
         assertEquals("Did not get all files", 3, files.size());
     }
 
     @Test
     public void findFile() {
-        List<File> files = fileRepository.findByHash("vcf_hash");
+        File file = fileRepository.findByHash("vcf_hash");
 
-        assertEquals(1, files.size());
-
-        File file = files.get(0);
-
+        assertNotNull(file);
         assertEquals("vcf", file.getName());
         assertNotNull(file.getCreatedDate());
         assertNotNull(file.getLastModifiedDate());
@@ -89,8 +85,6 @@ public class FileRepositoryTest {
         SourceFilePath sourceFilePath = sourceFilePaths.iterator().next();
         assertEquals("/vcf/file/path", sourceFilePath.getPath());
         assertEquals(file, sourceFilePath.getFile());
-
-        assertTrue(fileRepository.exists("vcf_hash"));
     }
 
     @Test
@@ -100,28 +94,27 @@ public class FileRepositoryTest {
         fileRepository.save(secondVcf);
 
         // Assert it was created
-        List<File> foundFile = fileRepository.findByHash(secondVcf.getHash());
-        assertEquals(secondVcf.getName(), foundFile.get(0).getName());
+        File foundFile = fileRepository.findByHash(secondVcf.getHash());
+        assertEquals(secondVcf.getName(), foundFile.getName());
 
         // Edit it's name
         String newName = "new name";
-        foundFile.get(0).setName(newName);
+        foundFile.setName(newName);
 
         // Save to the database
-        fileRepository.save(foundFile.get(0));
+        fileRepository.save(foundFile);
 
         // Assert it updated
-        List<File> updatedFiles = fileRepository.findByHash(secondVcf.getHash());
-        File updatedFile = updatedFiles.get(0);
+        File updatedFile = fileRepository.findByHash(secondVcf.getHash());
         assertEquals(newName, updatedFile.getName());
         assertEquals(secondVcf.getHash(), updatedFile.getHash());
 
         // Delete file
-        fileRepository.delete(updatedFiles);
+        fileRepository.delete(updatedFile);
 
         // Assert not found
-        List<File> emptyFile = fileRepository.findByHash(secondVcf.getName());
-        assertEquals(0, emptyFile.size());
+        File emptyFile = fileRepository.findByHash(secondVcf.getName());
+        assertNull(emptyFile);
     }
 
 }
