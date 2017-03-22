@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.ampt2d.FileType;
-import uk.ac.ebi.ampt2d.persistence.entities.File;
+import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 import uk.ac.ebi.ampt2d.persistence.entities.SourceFilePath;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ import static org.junit.Assert.assertNull;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class FileRepositoryTest {
+public class FileMetadataRepositoryTest {
     @Autowired
     private FileRepository fileRepository;
 
@@ -48,13 +48,13 @@ public class FileRepositoryTest {
     public void setUp() throws Exception {
         fileRepository.deleteAll();
 
-        File vcf = new File("vcf_hash", "vcf", FileType.VCF, 15);
+        FileMetadata vcf = new FileMetadata("vcf_hash", "vcf", FileType.VCF, 15);
         vcf.setSourceFilePaths(new HashSet<>(Collections.singletonList(new SourceFilePath(vcf, "/vcf/file/path"))));
 
-        File bam = new File("bam_hash", "bam", FileType.BED, 20);
+        FileMetadata bam = new FileMetadata("bam_hash", "bam", FileType.BED, 20);
         bam.setSourceFilePaths(new HashSet<>(Collections.singletonList(new SourceFilePath(bam, "/bam/file/path"))));
 
-        File fastq = new File("fastq_hash", "fastq", FileType.FASTQ, 100);
+        FileMetadata fastq = new FileMetadata("fastq_hash", "fastq", FileType.FASTQ, 100);
         fastq.setSourceFilePaths(
                 new HashSet<>(Collections.singletonList(new SourceFilePath(fastq, "/fastq/file/path"))));
 
@@ -65,56 +65,56 @@ public class FileRepositoryTest {
 
     @Test
     public void loadFiles() {
-        List<File> files = (ArrayList<File>) fileRepository.findAll();
-        assertEquals("Did not get all files", 3, files.size());
+        List<FileMetadata> fileMetadatas = (ArrayList<FileMetadata>) fileRepository.findAll();
+        assertEquals("Did not get all fileMetadatas", 3, fileMetadatas.size());
     }
 
     @Test
     public void findFile() {
-        File file = fileRepository.findByHash("vcf_hash");
+        FileMetadata fileMetadata = fileRepository.findByHash("vcf_hash");
 
-        assertNotNull(file);
-        assertEquals("vcf", file.getName());
-        assertNotNull(file.getCreatedDate());
-        assertNotNull(file.getLastModifiedDate());
+        assertNotNull(fileMetadata);
+        assertEquals("vcf", fileMetadata.getName());
+        assertNotNull(fileMetadata.getCreatedDate());
+        assertNotNull(fileMetadata.getLastModifiedDate());
 
-        Set<SourceFilePath> sourceFilePaths = file.getSourceFilePaths();
+        Set<SourceFilePath> sourceFilePaths = fileMetadata.getSourceFilePaths();
         assertNotNull(sourceFilePaths);
-        assertEquals("Did not get all source file paths", 1, sourceFilePaths.size());
+        assertEquals("Did not get all source fileMetadata paths", 1, sourceFilePaths.size());
 
         SourceFilePath sourceFilePath = sourceFilePaths.iterator().next();
         assertEquals("/vcf/file/path", sourceFilePath.getPath());
-        assertEquals(file, sourceFilePath.getFile());
+        assertEquals(fileMetadata, sourceFilePath.getFileMetadata());
     }
 
     @Test
     public void testCRUD() {
         // Create a new file
-        File secondVcf = new File("new_vcf_hash", "vcf", FileType.VCF, 150);
+        FileMetadata secondVcf = new FileMetadata("new_vcf_hash", "vcf", FileType.VCF, 150);
         fileRepository.save(secondVcf);
 
         // Assert it was created
-        File foundFile = fileRepository.findByHash(secondVcf.getHash());
-        assertEquals(secondVcf.getName(), foundFile.getName());
+        FileMetadata foundFileMetadata = fileRepository.findByHash(secondVcf.getHash());
+        assertEquals(secondVcf.getName(), foundFileMetadata.getName());
 
         // Edit it's name
         String newName = "new name";
-        foundFile.setName(newName);
+        foundFileMetadata.setName(newName);
 
         // Save to the database
-        fileRepository.save(foundFile);
+        fileRepository.save(foundFileMetadata);
 
         // Assert it updated
-        File updatedFile = fileRepository.findByHash(secondVcf.getHash());
-        assertEquals(newName, updatedFile.getName());
-        assertEquals(secondVcf.getHash(), updatedFile.getHash());
+        FileMetadata updatedFileMetadata = fileRepository.findByHash(secondVcf.getHash());
+        assertEquals(newName, updatedFileMetadata.getName());
+        assertEquals(secondVcf.getHash(), updatedFileMetadata.getHash());
 
         // Delete file
-        fileRepository.delete(updatedFile);
+        fileRepository.delete(updatedFileMetadata);
 
         // Assert not found
-        File emptyFile = fileRepository.findByHash(secondVcf.getName());
-        assertNull(emptyFile);
+        FileMetadata emptyFileMetadata = fileRepository.findByHash(secondVcf.getName());
+        assertNull(emptyFileMetadata);
     }
 
 }

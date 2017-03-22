@@ -33,6 +33,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -40,7 +41,8 @@ import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class File {
+@Table(name="file")
+public class FileMetadata {
     public static final int MIN_FILE_HASH = 1;
 
     public static final int MAX_FILE_HASH = 128;
@@ -60,7 +62,7 @@ public class File {
 
     private long size;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "file", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fileMetadata", fetch = FetchType.EAGER)
     private Set<SourceFilePath> sourceFilePaths;
 
     @CreatedDate
@@ -71,17 +73,17 @@ public class File {
     @Column(nullable = false)
     private LocalDateTime lastModifiedDate;
 
-    public File(String hash,
-                String name,
-                FileType type,
-                long size) {
+    public FileMetadata(String hash,
+                        String name,
+                        FileType type,
+                        long size) {
         this.hash = hash;
         this.name = name;
         this.type = type;
         this.size = size;
     }
 
-    public File(java.io.File file, FileType type, String name) {
+    public FileMetadata(java.io.File file, FileType type, String name) {
         try {
             this.hash = Files.hash(file, Hashing.sha384()).toString();
         } catch (IOException e) {
@@ -92,7 +94,7 @@ public class File {
         this.name = name;
     }
 
-    public File() {
+    public FileMetadata() {
     }
 
     public String getHash() {
@@ -125,7 +127,7 @@ public class File {
     }
 
     public void setName(String name) {
-        Assert.hasText(hash, "File name is required");
+        Assert.hasText(hash, "FileMetadata name is required");
         this.name = name;
     }
 
@@ -136,7 +138,7 @@ public class File {
     public void setSourceFilePaths(Set<SourceFilePath> sourceFilePaths) {
         if (sourceFilePaths != null) {
             for (SourceFilePath sourceFilePath : sourceFilePaths) {
-                sourceFilePath.setFile(this);
+                sourceFilePath.setFileMetadata(this);
             }
             this.sourceFilePaths = sourceFilePaths;
         }

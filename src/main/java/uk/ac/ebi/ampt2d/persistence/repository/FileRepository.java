@@ -17,13 +17,11 @@ package uk.ac.ebi.ampt2d.persistence.repository;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import org.springframework.stereotype.Repository;
-import uk.ac.ebi.ampt2d.persistence.entities.File;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 
-import java.util.List;
-
-@Repository
-public interface FileRepository extends PagingAndSortingRepository<File, String>, FileRepositoryCustom {
-    File findById(long id);
-    File findByHash(String hash);
+@RepositoryRestResource(collectionResourceRel = "files", path = "files")
+public interface FileRepository extends PagingAndSortingRepository<FileMetadata, String>, FileRepositoryCustom {
+    FileMetadata findById(long id);
+    FileMetadata findByHash(String hash);
 }

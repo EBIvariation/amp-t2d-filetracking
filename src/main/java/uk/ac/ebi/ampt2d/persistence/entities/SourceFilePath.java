@@ -44,7 +44,7 @@ public class SourceFilePath {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "file_id")
-    private File file;
+    private FileMetadata fileMetadata;
 
     @Column(length = MAX_PATH, nullable = false)
     @Size(min = MIN_PATH, max = MAX_PATH)
@@ -57,9 +57,9 @@ public class SourceFilePath {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-    public SourceFilePath(File file, String path) {
+    public SourceFilePath(FileMetadata fileMetadata, String path) {
         this.path = path;
-        this.file = file;
+        this.fileMetadata = fileMetadata;
     }
 
     public SourceFilePath() {
@@ -73,12 +73,12 @@ public class SourceFilePath {
         this.id = id;
     }
 
-    public File getFile() {
-        return file;
+    public FileMetadata getFileMetadata() {
+        return fileMetadata;
     }
 
-    public void setFile(File file) {
-        this.file = file;
+    public void setFileMetadata(FileMetadata fileMetadata) {
+        this.fileMetadata = fileMetadata;
     }
 
     public String getPath() {

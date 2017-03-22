@@ -19,12 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ebi.ampt2d.FileType;
-import uk.ac.ebi.ampt2d.persistence.entities.File;
+import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 import uk.ac.ebi.ampt2d.persistence.entities.SourceFilePath;
 import uk.ac.ebi.ampt2d.persistence.repository.FileRepository;
 
@@ -53,14 +52,14 @@ public class FileTrackingController {
         }
 
         //TODO retrieve FileType from request somehow
-        File file = new File(storedFile, FileType.VCF, multipartFile.getName());
+        FileMetadata fileMetadata = new FileMetadata(storedFile, FileType.VCF, multipartFile.getName());
 
         Set<SourceFilePath> sourceFilePaths = new HashSet<>();
-        sourceFilePaths.add(new SourceFilePath(file, archivePath.toString()));
+        sourceFilePaths.add(new SourceFilePath(fileMetadata, archivePath.toString()));
 
-        file.setSourceFilePaths(sourceFilePaths);
+        fileMetadata.setSourceFilePaths(sourceFilePaths);
 
-        fileRepository.save(file);
+        fileRepository.save(fileMetadata);
 
         return new ResponseEntity<Path>(archivePath, HttpStatus.CREATED);
     }
