@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.ampt2d;
 
-public enum FileType {
+public enum Type {
     VCF,
     VCF_AGGREGATE,
     README_FILE,

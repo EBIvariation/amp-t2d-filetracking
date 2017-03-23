@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import uk.ac.ebi.ampt2d.FileType;
+import uk.ac.ebi.ampt2d.Type;
 import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 import uk.ac.ebi.ampt2d.persistence.entities.SourceFilePath;
 
@@ -48,13 +48,13 @@ public class FileMetadataRepositoryTest {
     public void setUp() throws Exception {
         fileRepository.deleteAll();
 
-        FileMetadata vcf = new FileMetadata("vcf_hash", "vcf", FileType.VCF, 15);
+        FileMetadata vcf = new FileMetadata("vcf_hash", "vcf", Type.VCF, 15);
         vcf.setSourceFilePaths(new HashSet<>(Collections.singletonList(new SourceFilePath(vcf, "/vcf/file/path"))));
 
-        FileMetadata bam = new FileMetadata("bam_hash", "bam", FileType.BED, 20);
+        FileMetadata bam = new FileMetadata("bam_hash", "bam", Type.BED, 20);
         bam.setSourceFilePaths(new HashSet<>(Collections.singletonList(new SourceFilePath(bam, "/bam/file/path"))));
 
-        FileMetadata fastq = new FileMetadata("fastq_hash", "fastq", FileType.FASTQ, 100);
+        FileMetadata fastq = new FileMetadata("fastq_hash", "fastq", Type.FASTQ, 100);
         fastq.setSourceFilePaths(
                 new HashSet<>(Collections.singletonList(new SourceFilePath(fastq, "/fastq/file/path"))));
 
@@ -90,7 +90,7 @@ public class FileMetadataRepositoryTest {
     @Test
     public void testCRUD() {
         // Create a new file
-        FileMetadata secondVcf = new FileMetadata("new_vcf_hash", "vcf", FileType.VCF, 150);
+        FileMetadata secondVcf = new FileMetadata("new_vcf_hash", "vcf", Type.VCF, 150);
         fileRepository.save(secondVcf);
 
         // Assert it was created

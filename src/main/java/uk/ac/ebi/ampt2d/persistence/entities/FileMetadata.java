@@ -21,7 +21,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.Assert;
-import uk.ac.ebi.ampt2d.FileType;
+import uk.ac.ebi.ampt2d.Type;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -56,7 +56,7 @@ public class FileMetadata {
     private String hash;
 
     @Enumerated(EnumType.STRING)
-    private FileType type;
+    private Type type;
 
     private String name;
 
@@ -75,7 +75,7 @@ public class FileMetadata {
 
     public FileMetadata(String hash,
                         String name,
-                        FileType type,
+                        Type type,
                         long size) {
         this.hash = hash;
         this.name = name;
@@ -83,7 +83,7 @@ public class FileMetadata {
         this.size = size;
     }
 
-    public FileMetadata(java.io.File file, FileType type, String name) {
+    public FileMetadata(java.io.File file, Type type, String name) {
         try {
             this.hash = Files.hash(file, Hashing.sha384()).toString();
         } catch (IOException e) {
@@ -106,11 +106,11 @@ public class FileMetadata {
         this.hash = hash;
     }
 
-    public FileType getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(FileType type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
