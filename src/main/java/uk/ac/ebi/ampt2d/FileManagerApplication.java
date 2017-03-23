@@ -27,9 +27,9 @@ import uk.ac.ebi.ampt2d.storage.StorageService;
 @EnableConfigurationProperties(StorageProperties.class)
 public class FileManagerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(FileManagerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(FileManagerApplication.class, args);
+    }
 
     @Bean
     CommandLineRunner init(StorageService storageService) {
