@@ -42,8 +42,8 @@ public class SourceFilePath {
     @GeneratedValue
     private long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "file_id")
+    @ManyToOne(cascade = CascadeType.ALL)
     private FileMetadata fileMetadata;
 
     @Column(length = MAX_PATH, nullable = false)

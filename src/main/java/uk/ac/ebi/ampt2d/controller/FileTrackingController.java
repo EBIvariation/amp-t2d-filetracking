@@ -18,8 +18,10 @@ package uk.ac.ebi.ampt2d.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ebi.ampt2d.Type;
@@ -27,6 +29,7 @@ import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 import uk.ac.ebi.ampt2d.persistence.entities.SourceFilePath;
 import uk.ac.ebi.ampt2d.persistence.repository.FileRepository;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -39,17 +42,11 @@ public class FileTrackingController {
     @Autowired
     private FileRepository fileRepository;
 
-    @PostMapping("/upload-and-archive")
-    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile multipartFile) {
-
+    @PostMapping("/upload")
+    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile multipartFile) throws IOException {
         Path archivePath = fileRepository.archive(multipartFile);
 
-        java.io.File storedFile = null;
-        try {
-            storedFile = convertMultipartToFile(multipartFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        File storedFile = convertMultipartToFile(multipartFile);
 
         //TODO retrieve Type from request somehow
         FileMetadata fileMetadata = new FileMetadata(storedFile, Type.VCF, multipartFile.getName());
@@ -64,8 +61,14 @@ public class FileTrackingController {
         return new ResponseEntity<Path>(archivePath, HttpStatus.CREATED);
     }
 
-    private java.io.File convertMultipartToFile(MultipartFile file) throws IOException {
-        java.io.File convFile = new java.io.File(file.getOriginalFilename());
+    @ExceptionHandler(IOException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleUploadException(Exception ex) {
+        return ex.getMessage();
+    }
+
+    private File convertMultipartToFile(MultipartFile file) throws IOException {
+        File convFile = new File(file.getOriginalFilename());
         convFile.createNewFile();
         FileOutputStream fos = new FileOutputStream(convFile);
         fos.write(file.getBytes());

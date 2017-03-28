@@ -20,5 +20,5 @@ import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.Path;
 
 public interface FileRepositoryCustom {
-    Path archive(MultipartFile file);
+    Path archive(MultipartFile upload);
 }

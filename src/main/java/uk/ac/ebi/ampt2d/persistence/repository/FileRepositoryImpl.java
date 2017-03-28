@@ -31,7 +31,7 @@ public class FileRepositoryImpl implements FileRepositoryCustom {
     private StorageService storageService;
 
     @Override
-    public Path archive(MultipartFile file) {
-        return storageService.store(file);
+    public Path archive(MultipartFile upload) {
+        return storageService.store(upload);
     }
 }

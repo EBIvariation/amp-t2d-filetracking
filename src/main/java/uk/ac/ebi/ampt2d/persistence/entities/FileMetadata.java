@@ -34,7 +34,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -73,22 +75,15 @@ public class FileMetadata {
     @Column(nullable = false)
     private LocalDateTime lastModifiedDate;
 
-    public FileMetadata(String hash,
-                        String name,
-                        Type type,
-                        long size) {
+    public FileMetadata(String hash, String name, Type type, long size) {
         this.hash = hash;
         this.name = name;
         this.type = type;
         this.size = size;
     }
 
-    public FileMetadata(java.io.File file, Type type, String name) {
-        try {
-            this.hash = Files.hash(file, Hashing.sha384()).toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public FileMetadata(File file, Type type, String name) throws IOException {
+        this.hash = Files.hash(file, Hashing.sha384()).toString();
         this.type = type;
         this.size = file.length();
         this.name = name;
@@ -127,7 +122,7 @@ public class FileMetadata {
     }
 
     public void setName(String name) {
-        Assert.hasText(hash, "FileMetadata name is required");
+        Assert.hasText(name, "File name is required");
         this.name = name;
     }
 

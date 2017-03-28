@@ -29,11 +29,11 @@ public class FileSystemStorageService implements StorageService {
     public Path store(MultipartFile file) {
         Path archivePath;
 
-        try {
-            if (file.isEmpty()) {
-                throw new StorageException("Failed to store empty file " + file.getOriginalFilename());
-            }
+        if (file.isEmpty()) {
+            throw new StorageException("Failed to store empty file " + file.getOriginalFilename());
+        }
 
+        try {
             archivePath = this.rootLocation.resolve(file.getOriginalFilename());
             logger.debug("Archiving file "+ file.getOriginalFilename() +" into " + archivePath.toString());
             Files.copy(file.getInputStream(), archivePath);

@@ -64,13 +64,13 @@ public class FileMetadataRepositoryTest {
     }
 
     @Test
-    public void loadFiles() {
+    public void testLoadFiles() {
         List<FileMetadata> fileMetadatas = (ArrayList<FileMetadata>) fileRepository.findAll();
         assertEquals("Did not get all fileMetadatas", 3, fileMetadatas.size());
     }
 
     @Test
-    public void findFile() {
+    public void testFindFile() {
         FileMetadata fileMetadata = fileRepository.findByHash("vcf_hash");
 
         assertNotNull(fileMetadata);
@@ -88,7 +88,7 @@ public class FileMetadataRepositoryTest {
     }
 
     @Test
-    public void testCRUD() {
+    public void testCRUDoperations() {
         // Create a new file
         FileMetadata secondVcf = new FileMetadata("new_vcf_hash", "vcf", Type.VCF, 150);
         fileRepository.save(secondVcf);
