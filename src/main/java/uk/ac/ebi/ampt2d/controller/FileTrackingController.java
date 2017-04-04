@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import uk.ac.ebi.ampt2d.Type;
+import uk.ac.ebi.ampt2d.FileType;
 import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 import uk.ac.ebi.ampt2d.persistence.entities.SourceFilePath;
 import uk.ac.ebi.ampt2d.persistence.repository.FileMetadataRepository;
@@ -48,8 +48,8 @@ public class FileTrackingController {
 
         File storedFile = convertMultipartToFile(multipartFile);
 
-        //TODO retrieve Type from request somehow
-        FileMetadata fileMetadata = new FileMetadata(storedFile, Type.VCF, multipartFile.getName());
+        //TODO retrieve FileType from request somehow
+        FileMetadata fileMetadata = new FileMetadata(storedFile, FileType.VCF, multipartFile.getName());
 
         Set<SourceFilePath> sourceFilePaths = new HashSet<>();
         sourceFilePaths.add(new SourceFilePath(fileMetadata, archivePath.toString()));
