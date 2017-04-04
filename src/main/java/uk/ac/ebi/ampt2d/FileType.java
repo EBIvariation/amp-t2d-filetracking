@@ -15,6 +15,9 @@
  */
 package uk.ac.ebi.ampt2d;
 
+/**
+ * File types tracked by the system. If a file type can't be determined we resort to the generic BINARY type.
+ */
 public enum FileType {
     VCF,
     VCF_AGGREGATE,
@@ -27,5 +30,5 @@ public enum FileType {
     GFF,
     FASTA,
     FASTQ,
-    OTHER
+    BINARY,
 }
