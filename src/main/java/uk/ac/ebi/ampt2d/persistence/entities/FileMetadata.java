@@ -38,11 +38,15 @@ import javax.validation.constraints.Size;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "file")
+@Table(name = "file_metadata")
 public class FileMetadata {
     public static final int MIN_FILE_HASH = 1;
 
@@ -57,14 +61,13 @@ public class FileMetadata {
     private String hash;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private FileType fileType;
-
-    private String name;
 
     private long size;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fileMetadata", fetch = FetchType.EAGER)
-    private Set<SourceFilePath> sourceFilePaths;
+    private final Set<SourceFilePath> sourceFilePaths;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -74,80 +77,44 @@ public class FileMetadata {
     @Column(nullable = false)
     private LocalDateTime lastModifiedDate;
 
-    public FileMetadata(String hash, String name, FileType fileType, long size) {
+    public FileMetadata(String hash, FileType fileType, long size) {
+        this();
         this.hash = hash;
-        this.name = name;
         this.fileType = fileType;
         this.size = size;
     }
 
     public FileMetadata(File file, FileType fileType) throws IOException {
-        this(Files.hash(file, Hashing.sha384()).toString(), file.getName(), fileType, file.length());
+        this(Files.hash(file, Hashing.sha384()).toString(), fileType, file.length());
     }
 
-    public FileMetadata() {
+    protected FileMetadata() {
+        sourceFilePaths = new LinkedHashSet<>();
     }
 
     public String getHash() {
         return hash;
     }
 
-    public void setHash(String hash) {
-        Assert.hasText(hash, "Hash is required");
-        this.hash = hash;
-    }
-
-    public FileType getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(FileType fileType) {
-        this.fileType = fileType;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        Assert.hasText(name, "File name is required");
-        this.name = name;
-    }
-
     public Set<SourceFilePath> getSourceFilePaths() {
-        return sourceFilePaths;
+        return Collections.unmodifiableSet(sourceFilePaths);
     }
 
-    public void setSourceFilePaths(Set<SourceFilePath> sourceFilePaths) {
-        if (sourceFilePaths != null) {
-            for (SourceFilePath sourceFilePath : sourceFilePaths) {
-                sourceFilePath.setFileMetadata(this);
-            }
-            this.sourceFilePaths = sourceFilePaths;
-        }
+    public void addSourceFilePaths(SourceFilePath ... sourceFilePaths) {
+        Stream.of(sourceFilePaths).filter(Objects::nonNull).forEach(sourceFilePath -> addSourceFile(sourceFilePath));
+    }
+
+    private void addSourceFile(SourceFilePath sourceFilePath) {
+        sourceFilePath.setFileMetadata(this);
+        sourceFilePaths.add(sourceFilePath);
     }
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public LocalDateTime getLastModifiedDate() {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
 }

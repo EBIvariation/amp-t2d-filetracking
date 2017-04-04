@@ -52,10 +52,7 @@ public class FileTrackingController {
         //TODO retrieve FileType from request somehow
         FileMetadata fileMetadata = new FileMetadata(storedFile, FileType.VCF);
 
-        Set<SourceFilePath> sourceFilePaths = new HashSet<>();
-        sourceFilePaths.add(new SourceFilePath(fileMetadata, archivePath.toString()));
-
-        fileMetadata.setSourceFilePaths(sourceFilePaths);
+        fileMetadata.addSourceFilePaths(new SourceFilePath(fileMetadata, archivePath.toString()));
 
         fileMetadataRepository.save(fileMetadata);
 

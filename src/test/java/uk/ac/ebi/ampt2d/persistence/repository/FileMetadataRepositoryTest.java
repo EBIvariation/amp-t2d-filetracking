@@ -41,6 +41,7 @@ import static org.junit.Assert.assertNull;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class FileMetadataRepositoryTest {
+    public static final String RANDOMSTRING = "randomstring";
     @Autowired
     private FileMetadataRepository fileMetadataRepository;
 
@@ -48,15 +49,14 @@ public class FileMetadataRepositoryTest {
     public void setUp() throws Exception {
         fileMetadataRepository.deleteAll();
 
-        FileMetadata vcf = new FileMetadata("vcf_hash", "vcf", FileType.VCF, 15);
-        vcf.setSourceFilePaths(new HashSet<>(Collections.singletonList(new SourceFilePath(vcf, "/vcf/file/path"))));
+        FileMetadata vcf = new FileMetadata("vcf_hash", FileType.VCF, 15);
+        vcf.addSourceFilePaths(new SourceFilePath(vcf, "/vcf/file/path"));
 
-        FileMetadata bam = new FileMetadata("bam_hash", "bam", FileType.BED, 20);
-        bam.setSourceFilePaths(new HashSet<>(Collections.singletonList(new SourceFilePath(bam, "/bam/file/path"))));
+        FileMetadata bam = new FileMetadata("bam_hash", FileType.BED, 20);
+        bam.addSourceFilePaths(new SourceFilePath(bam, "/bam/file/path"));
 
-        FileMetadata fastq = new FileMetadata("fastq_hash", "fastq", FileType.FASTQ, 100);
-        fastq.setSourceFilePaths(
-                new HashSet<>(Collections.singletonList(new SourceFilePath(fastq, "/fastq/file/path"))));
+        FileMetadata fastq = new FileMetadata("fastq_hash", FileType.FASTQ, 100);
+        fastq.addSourceFilePaths(new SourceFilePath(fastq, "/fastq/file/path"));
 
         fileMetadataRepository.save(vcf);
         fileMetadataRepository.save(bam);
@@ -74,7 +74,6 @@ public class FileMetadataRepositoryTest {
         FileMetadata fileMetadata = fileMetadataRepository.findByHash("vcf_hash");
 
         assertNotNull(fileMetadata);
-        assertEquals("vcf", fileMetadata.getName());
         assertNotNull(fileMetadata.getCreatedDate());
         assertNotNull(fileMetadata.getLastModifiedDate());
 
@@ -90,30 +89,25 @@ public class FileMetadataRepositoryTest {
     @Test
     public void testCRUDoperations() {
         // Create a new file
-        FileMetadata secondVcf = new FileMetadata("new_vcf_hash", "vcf", FileType.VCF, 150);
+        FileMetadata secondVcf = new FileMetadata("new_vcf_hash", FileType.VCF, 150);
         fileMetadataRepository.save(secondVcf);
 
         // Assert it was created
         FileMetadata foundFileMetadata = fileMetadataRepository.findByHash(secondVcf.getHash());
-        assertEquals(secondVcf.getName(), foundFileMetadata.getName());
-
-        // Edit it's name
-        String newName = "new name";
-        foundFileMetadata.setName(newName);
+        assertNotNull(foundFileMetadata);
 
         // Save to the database
         fileMetadataRepository.save(foundFileMetadata);
 
         // Assert it updated
         FileMetadata updatedFileMetadata = fileMetadataRepository.findByHash(secondVcf.getHash());
-        assertEquals(newName, updatedFileMetadata.getName());
         assertEquals(secondVcf.getHash(), updatedFileMetadata.getHash());
 
         // Delete file
         fileMetadataRepository.delete(updatedFileMetadata);
 
         // Assert not found
-        FileMetadata emptyFileMetadata = fileMetadataRepository.findByHash(secondVcf.getName());
+        FileMetadata emptyFileMetadata = fileMetadataRepository.findByHash(RANDOMSTRING);
         assertNull(emptyFileMetadata);
     }
 
