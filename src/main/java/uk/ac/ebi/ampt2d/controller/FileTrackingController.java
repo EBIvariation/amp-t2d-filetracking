@@ -28,6 +28,7 @@ import uk.ac.ebi.ampt2d.FileType;
 import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 import uk.ac.ebi.ampt2d.persistence.entities.SourceFilePath;
 import uk.ac.ebi.ampt2d.persistence.repository.FileMetadataRepository;
+import uk.ac.ebi.ampt2d.storage.StorageException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,7 +44,7 @@ public class FileTrackingController {
     private FileMetadataRepository fileMetadataRepository;
 
     @PostMapping("/upload")
-    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile multipartFile) throws IOException, StorageException {
         Path archivePath = fileMetadataRepository.archive(multipartFile);
 
         File storedFile = convertMultipartToFile(multipartFile);

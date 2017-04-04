@@ -7,13 +7,13 @@ import java.nio.file.Path;
 
 public interface StorageService {
 
-    void init();
+    void init() throws StorageException;
 
-    Path store(MultipartFile file);
+    Path store(MultipartFile file) throws StorageException;
 
     Path load(String filename);
 
-    Resource loadAsResource(String filename);
+    Resource loadAsResource(String filename) throws StorageFileNotFoundException;
 
     void deleteAll();
 

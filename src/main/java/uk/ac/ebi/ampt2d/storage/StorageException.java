@@ -1,6 +1,6 @@
 package uk.ac.ebi.ampt2d.storage;
 
-public class StorageException extends RuntimeException {
+public class StorageException extends Exception {
 
     public StorageException(String message) {
         super(message);

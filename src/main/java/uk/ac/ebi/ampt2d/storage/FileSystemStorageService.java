@@ -26,7 +26,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public Path store(MultipartFile file) {
+    public Path store(MultipartFile file) throws StorageException {
         Path archivePath;
 
         if (file.isEmpty()) {
@@ -50,7 +50,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public Resource loadAsResource(String filename) {
+    public Resource loadAsResource(String filename) throws StorageFileNotFoundException {
         try {
             Path file = load(filename);
             Resource resource = new UrlResource(file.toUri());
@@ -72,7 +72,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public void init() {
+    public void init() throws StorageException {
         try {
             Files.createDirectory(rootLocation);
         } catch (IOException e) {

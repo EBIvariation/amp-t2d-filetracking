@@ -16,9 +16,10 @@
 package uk.ac.ebi.ampt2d.persistence.repository;
 
 import org.springframework.web.multipart.MultipartFile;
+import uk.ac.ebi.ampt2d.storage.StorageException;
 
 import java.nio.file.Path;
 
 public interface FileRepositoryCustom {
-    Path archive(MultipartFile upload);
+    Path archive(MultipartFile upload) throws StorageException;
 }
