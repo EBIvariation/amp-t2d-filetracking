@@ -22,7 +22,9 @@ import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 
 @RepositoryRestResource(collectionResourceRel = "files", path = "files")
 public interface FileMetadataRepository extends PagingAndSortingRepository<FileMetadata, String>, FileRepositoryCustom {
+
     FileMetadata findById(long id);
 
     FileMetadata findByHash(String hash);
+
 }

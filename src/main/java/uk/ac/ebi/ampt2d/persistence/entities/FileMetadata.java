@@ -48,6 +48,7 @@ import java.util.stream.Stream;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "file_metadata")
 public class FileMetadata {
+
     public static final int MIN_FILE_HASH = 1;
 
     public static final int MAX_FILE_HASH = 128;

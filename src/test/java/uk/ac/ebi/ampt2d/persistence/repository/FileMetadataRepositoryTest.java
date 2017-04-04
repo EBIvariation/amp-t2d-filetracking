@@ -41,7 +41,9 @@ import static org.junit.Assert.assertNull;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class FileMetadataRepositoryTest {
+
     public static final String RANDOMSTRING = "randomstring";
+
     @Autowired
     private FileMetadataRepository fileMetadataRepository;
 
