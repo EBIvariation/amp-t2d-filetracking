@@ -27,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ebi.ampt2d.Type;
 import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 import uk.ac.ebi.ampt2d.persistence.entities.SourceFilePath;
-import uk.ac.ebi.ampt2d.persistence.repository.FileRepository;
+import uk.ac.ebi.ampt2d.persistence.repository.FileMetadataRepository;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,11 +40,11 @@ import java.util.Set;
 public class FileTrackingController {
 
     @Autowired
-    private FileRepository fileRepository;
+    private FileMetadataRepository fileMetadataRepository;
 
     @PostMapping("/upload")
     public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile multipartFile) throws IOException {
-        Path archivePath = fileRepository.archive(multipartFile);
+        Path archivePath = fileMetadataRepository.archive(multipartFile);
 
         File storedFile = convertMultipartToFile(multipartFile);
 
@@ -56,7 +56,7 @@ public class FileTrackingController {
 
         fileMetadata.setSourceFilePaths(sourceFilePaths);
 
-        fileRepository.save(fileMetadata);
+        fileMetadataRepository.save(fileMetadata);
 
         return new ResponseEntity<Path>(archivePath, HttpStatus.CREATED);
     }

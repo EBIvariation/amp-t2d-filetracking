@@ -42,11 +42,11 @@ import static org.junit.Assert.assertNull;
 @SpringBootTest
 public class FileMetadataRepositoryTest {
     @Autowired
-    private FileRepository fileRepository;
+    private FileMetadataRepository fileMetadataRepository;
 
     @Before
     public void setUp() throws Exception {
-        fileRepository.deleteAll();
+        fileMetadataRepository.deleteAll();
 
         FileMetadata vcf = new FileMetadata("vcf_hash", "vcf", Type.VCF, 15);
         vcf.setSourceFilePaths(new HashSet<>(Collections.singletonList(new SourceFilePath(vcf, "/vcf/file/path"))));
@@ -58,20 +58,20 @@ public class FileMetadataRepositoryTest {
         fastq.setSourceFilePaths(
                 new HashSet<>(Collections.singletonList(new SourceFilePath(fastq, "/fastq/file/path"))));
 
-        fileRepository.save(vcf);
-        fileRepository.save(bam);
-        fileRepository.save(fastq);
+        fileMetadataRepository.save(vcf);
+        fileMetadataRepository.save(bam);
+        fileMetadataRepository.save(fastq);
     }
 
     @Test
     public void testLoadFiles() {
-        List<FileMetadata> fileMetadatas = (ArrayList<FileMetadata>) fileRepository.findAll();
+        List<FileMetadata> fileMetadatas = (ArrayList<FileMetadata>) fileMetadataRepository.findAll();
         assertEquals("Did not get all fileMetadatas", 3, fileMetadatas.size());
     }
 
     @Test
     public void testFindFile() {
-        FileMetadata fileMetadata = fileRepository.findByHash("vcf_hash");
+        FileMetadata fileMetadata = fileMetadataRepository.findByHash("vcf_hash");
 
         assertNotNull(fileMetadata);
         assertEquals("vcf", fileMetadata.getName());
@@ -91,10 +91,10 @@ public class FileMetadataRepositoryTest {
     public void testCRUDoperations() {
         // Create a new file
         FileMetadata secondVcf = new FileMetadata("new_vcf_hash", "vcf", Type.VCF, 150);
-        fileRepository.save(secondVcf);
+        fileMetadataRepository.save(secondVcf);
 
         // Assert it was created
-        FileMetadata foundFileMetadata = fileRepository.findByHash(secondVcf.getHash());
+        FileMetadata foundFileMetadata = fileMetadataRepository.findByHash(secondVcf.getHash());
         assertEquals(secondVcf.getName(), foundFileMetadata.getName());
 
         // Edit it's name
@@ -102,18 +102,18 @@ public class FileMetadataRepositoryTest {
         foundFileMetadata.setName(newName);
 
         // Save to the database
-        fileRepository.save(foundFileMetadata);
+        fileMetadataRepository.save(foundFileMetadata);
 
         // Assert it updated
-        FileMetadata updatedFileMetadata = fileRepository.findByHash(secondVcf.getHash());
+        FileMetadata updatedFileMetadata = fileMetadataRepository.findByHash(secondVcf.getHash());
         assertEquals(newName, updatedFileMetadata.getName());
         assertEquals(secondVcf.getHash(), updatedFileMetadata.getHash());
 
         // Delete file
-        fileRepository.delete(updatedFileMetadata);
+        fileMetadataRepository.delete(updatedFileMetadata);
 
         // Assert not found
-        FileMetadata emptyFileMetadata = fileRepository.findByHash(secondVcf.getName());
+        FileMetadata emptyFileMetadata = fileMetadataRepository.findByHash(secondVcf.getName());
         assertNull(emptyFileMetadata);
     }
 
