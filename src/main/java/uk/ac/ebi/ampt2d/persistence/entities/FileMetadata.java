@@ -42,7 +42,7 @@ import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name="file")
+@Table(name = "file")
 public class FileMetadata {
     public static final int MIN_FILE_HASH = 1;
 
@@ -81,11 +81,8 @@ public class FileMetadata {
         this.size = size;
     }
 
-    public FileMetadata(File file, FileType fileType, String name) throws IOException {
-        this.hash = Files.hash(file, Hashing.sha384()).toString();
-        this.fileType = fileType;
-        this.size = file.length();
-        this.name = name;
+    public FileMetadata(File file, FileType fileType) throws IOException {
+        this(Files.hash(file, Hashing.sha384()).toString(), file.getName(), fileType, file.length());
     }
 
     public FileMetadata() {

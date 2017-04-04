@@ -49,7 +49,7 @@ public class FileTrackingController {
         File storedFile = convertMultipartToFile(multipartFile);
 
         //TODO retrieve FileType from request somehow
-        FileMetadata fileMetadata = new FileMetadata(storedFile, FileType.VCF, multipartFile.getName());
+        FileMetadata fileMetadata = new FileMetadata(storedFile, FileType.VCF);
 
         Set<SourceFilePath> sourceFilePaths = new HashSet<>();
         sourceFilePaths.add(new SourceFilePath(fileMetadata, archivePath.toString()));
