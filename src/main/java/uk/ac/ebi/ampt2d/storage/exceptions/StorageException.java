@@ -1,4 +1,4 @@
-package uk.ac.ebi.ampt2d.storage;
+package uk.ac.ebi.ampt2d.storage.exceptions;
 
 public class StorageException extends Exception {
 

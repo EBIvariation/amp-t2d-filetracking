@@ -16,7 +16,7 @@
 package uk.ac.ebi.ampt2d.persistence.repository;
 
 import org.springframework.web.multipart.MultipartFile;
-import uk.ac.ebi.ampt2d.storage.StorageException;
+import uk.ac.ebi.ampt2d.storage.exceptions.StorageException;
 
 import java.nio.file.Path;
 

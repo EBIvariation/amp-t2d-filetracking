@@ -7,6 +7,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
+import uk.ac.ebi.ampt2d.storage.exceptions.StorageException;
+import uk.ac.ebi.ampt2d.storage.exceptions.StorageFileNotFoundException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

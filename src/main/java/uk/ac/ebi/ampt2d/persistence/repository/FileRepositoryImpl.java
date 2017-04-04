@@ -18,7 +18,7 @@ package uk.ac.ebi.ampt2d.persistence.repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
-import uk.ac.ebi.ampt2d.storage.StorageException;
+import uk.ac.ebi.ampt2d.storage.exceptions.StorageException;
 import uk.ac.ebi.ampt2d.storage.StorageService;
 
 import javax.transaction.Transactional;

@@ -28,7 +28,7 @@ import uk.ac.ebi.ampt2d.FileType;
 import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 import uk.ac.ebi.ampt2d.persistence.entities.SourceFilePath;
 import uk.ac.ebi.ampt2d.persistence.repository.FileMetadataRepository;
-import uk.ac.ebi.ampt2d.storage.StorageException;
+import uk.ac.ebi.ampt2d.storage.exceptions.StorageException;
 
 import java.io.File;
 import java.io.FileOutputStream;
