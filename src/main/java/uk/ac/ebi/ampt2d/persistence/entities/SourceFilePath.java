@@ -57,20 +57,11 @@ public class SourceFilePath {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-    public SourceFilePath(FileMetadata fileMetadata, String path) {
+    public SourceFilePath(String path) {
         this.path = path;
-        this.fileMetadata = fileMetadata;
     }
 
-    public SourceFilePath() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    protected SourceFilePath() {
     }
 
     public FileMetadata getFileMetadata() {
@@ -85,23 +76,4 @@ public class SourceFilePath {
         return path;
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
 }

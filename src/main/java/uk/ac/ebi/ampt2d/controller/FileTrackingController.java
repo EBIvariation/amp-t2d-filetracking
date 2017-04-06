@@ -28,6 +28,7 @@ import uk.ac.ebi.ampt2d.FileType;
 import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 import uk.ac.ebi.ampt2d.persistence.entities.SourceFilePath;
 import uk.ac.ebi.ampt2d.persistence.repository.FileMetadataRepository;
+import uk.ac.ebi.ampt2d.storage.FileSystemStorageService;
 import uk.ac.ebi.ampt2d.storage.exceptions.StorageException;
 
 import java.io.File;
@@ -43,35 +44,26 @@ public class FileTrackingController {
     @Autowired
     private FileMetadataRepository fileMetadataRepository;
 
+    @Autowired
+    private FileSystemStorageService fileSystemStorageService;
+
     @PostMapping("/upload")
     public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile multipartFile) throws IOException, StorageException {
-        Path archivePath = fileMetadataRepository.archive(multipartFile);
+        SourceFilePath sourceFilePath = fileSystemStorageService.store(multipartFile);
+        String fileHash = fileSystemStorageService.getFileHash(sourceFilePath);
+        long fileSize = fileSystemStorageService.getFileSize(sourceFilePath);
 
-        File storedFile = convertMultipartToFile(multipartFile);
-
-        //TODO retrieve FileType from request somehow
-        FileMetadata fileMetadata = new FileMetadata(storedFile, FileType.VCF);
-
-        fileMetadata.addSourceFilePaths(new SourceFilePath(fileMetadata, archivePath.toString()));
-
+        FileMetadata fileMetadata = new FileMetadata(fileHash, FileType.BINARY, fileSize);
+        fileMetadata.addSourceFilePaths(sourceFilePath);
         fileMetadataRepository.save(fileMetadata);
 
-        return new ResponseEntity<Path>(archivePath, HttpStatus.CREATED);
+        return new ResponseEntity<FileMetadata>(fileMetadata, HttpStatus.CREATED);
     }
 
     @ExceptionHandler(IOException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleUploadException(Exception ex) {
         return ex.getMessage();
-    }
-
-    private File convertMultipartToFile(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        convFile.createNewFile();
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
     }
 
 }

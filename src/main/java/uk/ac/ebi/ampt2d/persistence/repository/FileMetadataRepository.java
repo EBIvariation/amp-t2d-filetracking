@@ -21,9 +21,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 
 @RepositoryRestResource(collectionResourceRel = "files", path = "files")
-public interface FileMetadataRepository extends PagingAndSortingRepository<FileMetadata, String>, FileRepositoryCustom {
-
-    FileMetadata findById(long id);
+public interface FileMetadataRepository extends PagingAndSortingRepository<FileMetadata, String> {
 
     FileMetadata findByHash(String hash);
 

@@ -15,12 +15,9 @@
  */
 package uk.ac.ebi.ampt2d.persistence.entities;
 
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.util.Assert;
 import uk.ac.ebi.ampt2d.FileType;
 
 import javax.persistence.CascadeType;
@@ -35,8 +32,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -85,10 +80,6 @@ public class FileMetadata {
         this.size = size;
     }
 
-    public FileMetadata(File file, FileType fileType) throws IOException {
-        this(Files.hash(file, Hashing.sha384()).toString(), fileType, file.length());
-    }
-
     protected FileMetadata() {
         sourceFilePaths = new LinkedHashSet<>();
     }
@@ -101,7 +92,7 @@ public class FileMetadata {
         return Collections.unmodifiableSet(sourceFilePaths);
     }
 
-    public void addSourceFilePaths(SourceFilePath ... sourceFilePaths) {
+    public void addSourceFilePaths(SourceFilePath... sourceFilePaths) {
         Stream.of(sourceFilePaths).filter(Objects::nonNull).forEach(sourceFilePath -> addSourceFile(sourceFilePath));
     }
 

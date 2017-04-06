@@ -1,61 +1,68 @@
 package uk.ac.ebi.ampt2d.storage;
 
+import com.google.common.hash.Hashing;
 import org.apache.log4j.Logger;
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.springframework.web.multipart.MultipartFile;
+import uk.ac.ebi.ampt2d.persistence.entities.SourceFilePath;
 import uk.ac.ebi.ampt2d.storage.exceptions.StorageException;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class FileSystemStorageService implements StorageService {
 
     private Logger logger = Logger.getLogger(FileSystemStorageService.class);
 
-    private final Path rootLocation;
+    private final StorageProperties storageProperties;
 
-    public FileSystemStorageService(StorageProperties properties) {
-        String location = properties.getLocation();
-        assertPath(location);
-        this.rootLocation = Paths.get(location);
-
-    }
-
-    private void assertPath(String location) {
-        Assert.notNull(location, "Location must be defined in properties");
-        Path path = Paths.get(location);
-        Assert.isTrue(Files.exists(path), "Location doesn't exist");
-        Assert.isTrue(Files.isDirectory(path), "Location is not a directory");
-        Assert.isTrue(Files.isWritable(path), "Location doesn't allow to write");
-        Assert.isTrue(Files.isReadable(path), "Location is not readable");
+    public FileSystemStorageService(StorageProperties storageProperties) {
+        this.storageProperties = storageProperties;
     }
 
     @Override
-    public Path store(MultipartFile file) throws StorageException {
-        Path archivePath;
+    public SourceFilePath store(InputStreamSource file) throws StorageException {
+        LocalDateTime localDateTime = LocalDateTime.now();
 
-        if (file.isEmpty()) {
-            throw new StorageException("Failed to store empty file " + file.getOriginalFilename());
+        Path archivePath = Paths.get(storageProperties.getLocation(), Integer.toString(localDateTime.getYear()),
+                Integer.toString(localDateTime.getMonthValue()), Integer.toString(localDateTime.getDayOfMonth()));
+
+        try {
+            Files.createDirectories(archivePath);
+        } catch (IOException e) {
+            final String message = "Error while creating archiving directory " + archivePath;
+            logger.error(message, e);
+            throw new StorageException(message);
         }
 
         try {
-            archivePath = this.rootLocation.resolve(file.getOriginalFilename());
-            logger.debug("Archiving file "+ file.getOriginalFilename() +" into " + archivePath.toString());
-            Files.copy(file.getInputStream(), archivePath);
+            Path fileArchivePath = archivePath.resolve(localDateTime.format(DateTimeFormatter.ofPattern("kk:mm:ss-N")));
+            logger.debug("Archiving file into " + fileArchivePath.toString());
+            Files.copy(file.getInputStream(), fileArchivePath);
 
-            return archivePath;
+            Path relativePath = Paths.get(storageProperties.getLocation()).relativize(fileArchivePath);
+
+            return new SourceFilePath(relativePath.toString());
         } catch (IOException e) {
-            throw new StorageException("Failed to store file " + file.getOriginalFilename(), e);
+            throw new StorageException("Failed to store file", e);
         }
     }
 
     @Override
-    public Path load(String filename) {
-        return rootLocation.resolve(filename);
+    public String getFileHash(SourceFilePath sourceFilePath) throws IOException {
+        Path filePath = Paths.get(storageProperties.getLocation()).resolve(sourceFilePath.getPath());
+        return com.google.common.io.Files.hash(filePath.toFile(), Hashing.sha384()).toString();
     }
+
+    @Override
+    public long getFileSize(SourceFilePath sourceFilePath) throws IOException {
+        return Files.size(Paths.get(storageProperties.getLocation()).resolve(sourceFilePath.getPath()));
+    }
+
 
 }
