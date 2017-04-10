@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.ampt2d.persistence.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -42,6 +43,7 @@ public class SourceFilePath {
     @GeneratedValue
     private long id;
 
+    @JsonBackReference
     @JoinColumn(name = "file_id")
     @ManyToOne(cascade = CascadeType.ALL)
     private FileMetadata fileMetadata;
@@ -68,7 +70,7 @@ public class SourceFilePath {
         return fileMetadata;
     }
 
-    public void setFileMetadata(FileMetadata fileMetadata) {
+    void setFileMetadata(FileMetadata fileMetadata) {
         this.fileMetadata = fileMetadata;
     }
 

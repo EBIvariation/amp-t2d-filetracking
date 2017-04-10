@@ -2,12 +2,12 @@ package uk.ac.ebi.ampt2d.storage;
 
 import com.google.common.hash.Hashing;
 import org.apache.log4j.Logger;
-import org.springframework.core.io.InputStreamSource;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.ampt2d.persistence.entities.SourceFilePath;
 import uk.ac.ebi.ampt2d.storage.exceptions.StorageException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,7 +26,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public SourceFilePath store(InputStreamSource file) throws StorageException {
+    public SourceFilePath store(InputStream inputStream) throws StorageException {
         LocalDateTime localDateTime = LocalDateTime.now();
 
         Path archivePath = Paths.get(storageProperties.getLocation(), Integer.toString(localDateTime.getYear()),
@@ -43,7 +43,7 @@ public class FileSystemStorageService implements StorageService {
         try {
             Path fileArchivePath = archivePath.resolve(localDateTime.format(DateTimeFormatter.ofPattern("kk:mm:ss-N")));
             logger.debug("Archiving file into " + fileArchivePath.toString());
-            Files.copy(file.getInputStream(), fileArchivePath);
+            Files.copy(inputStream, fileArchivePath);
 
             Path relativePath = Paths.get(storageProperties.getLocation()).relativize(fileArchivePath);
 
@@ -54,15 +54,22 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
+    public void remove(SourceFilePath sourceFilePath) {
+        resolveFilePath(sourceFilePath).toFile().delete();
+    }
+
+    @Override
     public String getFileHash(SourceFilePath sourceFilePath) throws IOException {
-        Path filePath = Paths.get(storageProperties.getLocation()).resolve(sourceFilePath.getPath());
-        return com.google.common.io.Files.hash(filePath.toFile(), Hashing.sha384()).toString();
+        return com.google.common.io.Files.hash(resolveFilePath(sourceFilePath).toFile(), Hashing.sha384()).toString();
     }
 
     @Override
     public long getFileSize(SourceFilePath sourceFilePath) throws IOException {
-        return Files.size(Paths.get(storageProperties.getLocation()).resolve(sourceFilePath.getPath()));
+        return Files.size(resolveFilePath(sourceFilePath));
     }
 
+    private Path resolveFilePath(SourceFilePath sourceFilePath) {
+        return Paths.get(storageProperties.getLocation()).resolve(sourceFilePath.getPath());
+    }
 
 }

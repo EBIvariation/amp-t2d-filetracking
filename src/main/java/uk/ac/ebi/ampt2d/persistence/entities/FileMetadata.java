@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.ampt2d.persistence.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -44,9 +45,9 @@ import java.util.stream.Stream;
 @Table(name = "file_metadata")
 public class FileMetadata {
 
-    public static final int MIN_FILE_HASH = 1;
+    private static final int MIN_FILE_HASH = 1;
 
-    public static final int MAX_FILE_HASH = 128;
+    private static final int MAX_FILE_HASH = 128;
 
     @Id
     @GeneratedValue
@@ -62,6 +63,7 @@ public class FileMetadata {
 
     private long size;
 
+    @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fileMetadata", fetch = FetchType.EAGER)
     private final Set<SourceFilePath> sourceFilePaths;
 
@@ -80,7 +82,7 @@ public class FileMetadata {
         this.size = size;
     }
 
-    protected FileMetadata() {
+    private FileMetadata() {
         sourceFilePaths = new LinkedHashSet<>();
     }
 
@@ -93,7 +95,7 @@ public class FileMetadata {
     }
 
     public void addSourceFilePaths(SourceFilePath... sourceFilePaths) {
-        Stream.of(sourceFilePaths).filter(Objects::nonNull).forEach(sourceFilePath -> addSourceFile(sourceFilePath));
+        Stream.of(sourceFilePaths).filter(Objects::nonNull).forEach(this::addSourceFile);
     }
 
     private void addSourceFile(SourceFilePath sourceFilePath) {

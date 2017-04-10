@@ -30,5 +30,6 @@ public enum FileType {
     GFF,
     FASTA,
     FASTQ,
+    TEXT,
     BINARY,
 }

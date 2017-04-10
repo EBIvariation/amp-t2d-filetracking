@@ -20,7 +20,10 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 
+import javax.transaction.Transactional;
+
 @RepositoryRestResource(collectionResourceRel = "files", path = "files")
+@Transactional
 public interface FileMetadataRepository extends PagingAndSortingRepository<FileMetadata, String> {
 
     FileMetadata findByHash(String hash);
