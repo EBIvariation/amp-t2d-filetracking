@@ -15,6 +15,9 @@
  */
 package uk.ac.ebi.ampt2d.storage.exceptions;
 
+/**
+ * Exception thrown by any of the storage systems when there is any irregular behaviour.
+ */
 public class StorageException extends Exception {
 
     public StorageException(String message) {

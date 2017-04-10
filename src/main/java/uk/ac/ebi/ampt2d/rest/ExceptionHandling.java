@@ -28,6 +28,9 @@ import uk.ac.ebi.ampt2d.storage.exceptions.StorageException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+/**
+ * This Class registers itself as a manager for exceptions thrown in the REST services.
+ */
 @RestControllerAdvice
 public class ExceptionHandling {
 

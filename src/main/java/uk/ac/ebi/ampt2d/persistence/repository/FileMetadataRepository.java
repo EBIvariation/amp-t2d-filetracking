@@ -22,6 +22,10 @@ import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 
 import javax.transaction.Transactional;
 
+/**
+ * Spring generated repository for accessing FileMetadata. This repository also includes the
+ * {@link RepositoryRestResource} that configures spring to generate automatically a rest controller for the repository.
+ */
 @RepositoryRestResource(collectionResourceRel = "files", path = "files")
 @Transactional
 public interface FileMetadataRepository extends PagingAndSortingRepository<FileMetadata, String> {

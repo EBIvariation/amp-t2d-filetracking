@@ -29,6 +29,10 @@ import uk.ac.ebi.ampt2d.storage.exceptions.StorageException;
 
 import java.io.IOException;
 
+/**
+ * Rest controller for the file tracking. This controller doesn't show the repository operations, that controller is
+ * generated automatically by spring
+ */
 @RestController
 public class FileTrackingController {
 

@@ -40,6 +40,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
+/**
+ * Entity with the basic file metadata
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "file_metadata")

@@ -18,6 +18,9 @@ package uk.ac.ebi.ampt2d.configuration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+/**
+ * Minimum configuration to enable spring automated auditing on jpa.
+ */
 @Configuration
 @EnableJpaAuditing
 public class AuditConfiguration {

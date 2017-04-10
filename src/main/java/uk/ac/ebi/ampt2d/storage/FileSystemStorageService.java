@@ -29,6 +29,9 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Service that provides the operations to operate files in a file system storage.
+ */
 @Service
 public class FileSystemStorageService implements StorageService {
 

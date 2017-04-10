@@ -15,6 +15,9 @@
  */
 package uk.ac.ebi.ampt2d.storage.exceptions;
 
+/**
+ * Exception thrown when a file can't be found in the storage.
+ */
 public class StorageFileNotFoundException extends StorageException {
 
     public StorageFileNotFoundException(String message) {

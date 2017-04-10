@@ -17,6 +17,9 @@ package uk.ac.ebi.ampt2d.storage;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * Properties required to configure a FileSystemStorage.
+ */
 @ConfigurationProperties("storage")
 public class StorageProperties {
 

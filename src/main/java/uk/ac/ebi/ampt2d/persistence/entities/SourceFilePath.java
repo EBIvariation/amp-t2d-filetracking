@@ -32,6 +32,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
+/**
+ * Persistence information required to recover a stored file.
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class SourceFilePath {

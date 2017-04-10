@@ -28,6 +28,9 @@ import uk.ac.ebi.ampt2d.storage.exceptions.StorageException;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Service that implements the file tracking operations.
+ */
 @Service
 public class FileTrackingService {
 

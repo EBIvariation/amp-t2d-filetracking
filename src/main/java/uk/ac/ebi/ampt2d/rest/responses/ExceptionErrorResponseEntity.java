@@ -23,6 +23,9 @@ import org.springframework.util.MultiValueMap;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
+/**
+ * Custom http response entity that returns a custom version of the default spring exception error.
+ */
 public class ExceptionErrorResponseEntity extends ResponseEntity<ExceptionError> {
 
     public ExceptionErrorResponseEntity(String message, HttpServletRequest request,
