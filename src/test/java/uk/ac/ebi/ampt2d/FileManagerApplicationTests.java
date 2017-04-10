@@ -35,43 +35,75 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import uk.ac.ebi.ampt2d.configuration.RestTemplateConfiguration;
+import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
+import uk.ac.ebi.ampt2d.rest.FileTrackingController;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import static uk.ac.ebi.ampt2d.persistence.repository.FileMetadataRepository.REST_REPOSITORY_FILES;
+import static uk.ac.ebi.ampt2d.rest.FileTrackingController.REST_UPLOAD;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
 public class FileManagerApplicationTests {
 
+    private static final String TEST_HASH = "asd123";
+    private static final String TEST_HASH_REPEATED = "asd456";
+    public static final String TEST_FILE = "/test.file";
     @Autowired
     private TestRestTemplate restTemplate;
 
     @Test
     public void fileUpload() throws URISyntaxException {
-        File resource = new File(FileManagerApplicationTests.class.getResource("/test.file").getFile());
+        File resource = new File(FileManagerApplicationTests.class.getResource(TEST_FILE).getFile());
 
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
         parts.add("file", new FileSystemResource(resource));
 
-        ResponseEntity<Void> result = restTemplate.postForEntity("/upload", parts, Void.class);
+        ResponseEntity<Void> result = restTemplate.postForEntity(REST_UPLOAD, parts, Void.class);
 
         Assert.assertEquals(HttpStatus.CREATED,result.getStatusCode());
     }
 
     @Test
     public void uploadTwoTimesTheSameFile() throws URISyntaxException {
-        File resource = new File(FileManagerApplicationTests.class.getResource("/test.file").getFile());
+        File resource = new File(FileManagerApplicationTests.class.getResource(TEST_FILE).getFile());
 
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
         parts.add("file", new FileSystemResource(resource));
 
-        ResponseEntity<Void> result = restTemplate.postForEntity("/upload", parts, Void.class);
+        ResponseEntity<Void> result = restTemplate.postForEntity(REST_UPLOAD, parts, Void.class);
         Assert.assertEquals(HttpStatus.CREATED,result.getStatusCode());
-        result = restTemplate.postForEntity("/upload", parts, Void.class);
+        result = restTemplate.postForEntity(REST_UPLOAD, parts, Void.class);
         Assert.assertEquals(HttpStatus.CREATED,result.getStatusCode());
     }
 
+    @Test
+    public void checkRestToRepository(){
+        ResponseEntity<String> response = restTemplate.getForEntity(REST_REPOSITORY_FILES,String.class);
+        Assert.assertEquals(HttpStatus.OK,response.getStatusCode());
+    }
+
+    @Test
+    public void checkAddToRepository(){
+        FileMetadata fileMetadata = new FileMetadata(TEST_HASH,FileType.PHENOTYPE_FILE,1L);
+        ResponseEntity<String> response = restTemplate.postForEntity(REST_REPOSITORY_FILES,fileMetadata,String.class);
+        Assert.assertEquals(HttpStatus.CREATED,response.getStatusCode());
+
+    }
+
+    @Test
+    public void checkDoubleAddToRepository(){
+        FileMetadata fileMetadata = new FileMetadata(TEST_HASH_REPEATED,FileType.PHENOTYPE_FILE,1L);
+        ResponseEntity<String> response = restTemplate.postForEntity(REST_REPOSITORY_FILES,fileMetadata,String.class);
+        Assert.assertEquals(HttpStatus.CREATED,response.getStatusCode());
+        response = restTemplate.postForEntity(REST_REPOSITORY_FILES,fileMetadata,String.class);
+        Assert.assertEquals(HttpStatus.CONFLICT,response.getStatusCode());
+        System.out.println(response.getStatusCode());
+        System.out.println(response.getBody());
+    }
 }

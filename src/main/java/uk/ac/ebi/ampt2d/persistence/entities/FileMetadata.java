@@ -16,6 +16,7 @@
 package uk.ac.ebi.ampt2d.persistence.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -56,14 +57,17 @@ public class FileMetadata {
     @GeneratedValue
     private long id;
 
+    @JsonView
     @Column(length = MAX_FILE_HASH, unique = true)
     @Size(min = MIN_FILE_HASH, max = MAX_FILE_HASH)
     private String hash;
 
+    @JsonView
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FileType fileType;
 
+    @JsonView
     private long size;
 
     @JsonManagedReference

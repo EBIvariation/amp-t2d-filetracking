@@ -26,9 +26,11 @@ import javax.transaction.Transactional;
  * Spring generated repository for accessing FileMetadata. This repository also includes the
  * {@link RepositoryRestResource} that configures spring to generate automatically a rest controller for the repository.
  */
-@RepositoryRestResource(collectionResourceRel = "files", path = "files")
+@RepositoryRestResource(collectionResourceRel = "files", path = FileMetadataRepository.REST_REPOSITORY_FILES)
 @Transactional
-public interface FileMetadataRepository extends PagingAndSortingRepository<FileMetadata, String> {
+public interface FileMetadataRepository extends PagingAndSortingRepository<FileMetadata, Long> {
+
+    String REST_REPOSITORY_FILES = "/files";
 
     FileMetadata findByHash(String hash);
 

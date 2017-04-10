@@ -36,12 +36,13 @@ import java.io.IOException;
 @RestController
 public class FileTrackingController {
 
+    public static final String REST_UPLOAD = "/upload";
     private final Logger logger = LoggerFactory.getLogger(ExceptionHandling.class);
 
     @Autowired
     private FileTrackingService fileTrackingService;
 
-    @PostMapping("/upload")
+    @PostMapping(REST_UPLOAD)
     public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile multipartFile) throws
             IOException, StorageException {
         fileTrackingService.addFileToTrackingService(multipartFile.getInputStream());

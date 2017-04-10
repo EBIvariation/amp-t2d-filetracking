@@ -10,12 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RestTemplateConfiguration {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
-//    @Bean
-//    public TestRestTemplate testRestTemplate() {
-//        return new TestRestTemplate();
-//    }
-
     @Bean
     public RestTemplateBuilder restTemplateBuilder() {
         return new RestTemplateBuilder();
