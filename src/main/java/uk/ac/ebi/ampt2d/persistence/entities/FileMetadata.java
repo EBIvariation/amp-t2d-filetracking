@@ -49,17 +49,17 @@ import java.util.stream.Stream;
 @Table(name = "file_metadata")
 public class FileMetadata {
 
-    private static final int MIN_FILE_HASH = 1;
+    private static final int MIN_FILE_HASH_LENGTH = 1;
 
-    private static final int MAX_FILE_HASH = 128;
+    private static final int MAX_FILE_HASH_LENGTH = 128;
 
     @Id
     @GeneratedValue
     private long id;
 
     @JsonView
-    @Column(length = MAX_FILE_HASH, unique = true)
-    @Size(min = MIN_FILE_HASH, max = MAX_FILE_HASH)
+    @Column(length = MAX_FILE_HASH_LENGTH, unique = true)
+    @Size(min = MIN_FILE_HASH_LENGTH, max = MAX_FILE_HASH_LENGTH)
     private String hash;
 
     @JsonView

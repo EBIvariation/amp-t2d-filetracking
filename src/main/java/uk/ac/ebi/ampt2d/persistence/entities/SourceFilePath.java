@@ -39,8 +39,8 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class SourceFilePath {
 
-    private static final int MIN_PATH = 1;
-    private static final int MAX_PATH = 1024;
+    private static final int MIN_PATH_LENGTH = 1;
+    private static final int MAX_PATH_LENGTH = 1024;
 
     @Id
     @GeneratedValue
@@ -51,8 +51,8 @@ public class SourceFilePath {
     @ManyToOne(cascade = CascadeType.ALL)
     private FileMetadata fileMetadata;
 
-    @Column(length = MAX_PATH, nullable = false)
-    @Size(min = MIN_PATH, max = MAX_PATH)
+    @Column(length = MAX_PATH_LENGTH, nullable = false)
+    @Size(min = MIN_PATH_LENGTH, max = MAX_PATH_LENGTH)
     @NotNull
     private String path;
 
