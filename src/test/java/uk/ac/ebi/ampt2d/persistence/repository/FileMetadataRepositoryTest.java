@@ -73,17 +73,17 @@ public class FileMetadataRepositoryTest {
         fileMetadataRepository.save(fastq);
     }
 
-    private void configureTemporalFilePaths() {
+    private void configureTemporaryFilePaths() {
         try {
             given(storageProperties.getLocation()).willReturn(testFolder.newFolder().getAbsolutePath());
         } catch (IOException e) {
-            throw new RuntimeException("IOException while creating a new test temporal folder", e);
+            throw new RuntimeException("IOException while creating a new test temporary folder", e);
         }
     }
 
     @Test
     public void testLoadFiles() {
-        configureTemporalFilePaths();
+        configureTemporaryFilePaths();
 
         List<FileMetadata> fileMetadatas = (ArrayList<FileMetadata>) fileMetadataRepository.findAll();
         assertEquals("Did not get all fileMetadatas", 3, fileMetadatas.size());
@@ -91,7 +91,7 @@ public class FileMetadataRepositoryTest {
 
     @Test
     public void testFindFile() {
-        configureTemporalFilePaths();
+        configureTemporaryFilePaths();
 
         FileMetadata fileMetadata = fileMetadataRepository.findByHash("vcf_hash");
 
@@ -110,7 +110,7 @@ public class FileMetadataRepositoryTest {
 
     @Test
     public void testCRUDoperations() {
-        configureTemporalFilePaths();
+        configureTemporaryFilePaths();
 
         // Create a new file
         FileMetadata secondVcf = new FileMetadata("new_vcf_hash", FileType.VCF, 150);
