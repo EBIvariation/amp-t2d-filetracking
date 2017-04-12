@@ -40,7 +40,7 @@ public class FileTrackingService {
     @Autowired
     private FileSystemStorageService fileSystemStorageService;
 
-    public void addFileToTrackingService(InputStream inputStream) throws StorageException, IOException {
+    public void addFile(InputStream inputStream) throws StorageException, IOException {
         SourceFilePath sourceFilePath = fileSystemStorageService.store(inputStream);
         try {
             String fileHash = fileSystemStorageService.getFileHash(sourceFilePath);
