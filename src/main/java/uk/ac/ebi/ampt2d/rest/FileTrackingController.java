@@ -43,7 +43,7 @@ public class FileTrackingController {
     private FileTrackingService fileTrackingService;
 
     @PostMapping(REST_UPLOAD)
-    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile multipartFile) throws
+    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile multipartFile) throws
             IOException, StorageException {
         fileTrackingService.addFile(multipartFile.getInputStream());
         return new ResponseEntity<>(HttpStatus.CREATED);
