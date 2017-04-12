@@ -50,11 +50,11 @@ public class FileTrackingService {
             fileMetadata.addSourceFilePaths(sourceFilePath);
             fileMetadataRepository.save(fileMetadata);
         } catch (IOException e){
-            fileSystemStorageService.remove(sourceFilePath);
+            fileSystemStorageService.delete(sourceFilePath);
             throw e;
         } catch (DataIntegrityViolationException e) {
-            // Duplicated file, we remove the new stored file.
-            fileSystemStorageService.remove(sourceFilePath);
+            // Duplicated file, we delete the new stored file.
+            fileSystemStorageService.delete(sourceFilePath);
         }
     }
 

@@ -28,7 +28,7 @@ public interface StorageService {
 
     SourceFilePath store(InputStream inputStream) throws StorageException;
 
-    void remove(SourceFilePath sourceFilePath);
+    void delete(SourceFilePath sourceFilePath);
 
     String getFileHash(SourceFilePath sourceFilePath) throws IOException;
 

@@ -72,7 +72,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public void remove(SourceFilePath sourceFilePath) {
+    public void delete(SourceFilePath sourceFilePath) {
         resolveFilePath(sourceFilePath).toFile().delete();
     }
 
