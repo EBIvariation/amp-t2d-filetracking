@@ -43,6 +43,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import static org.junit.Assert.assertEquals;
 import static uk.ac.ebi.ampt2d.persistence.repository.FileMetadataRepository.REST_REPOSITORY_FILES;
 import static uk.ac.ebi.ampt2d.rest.FileTrackingController.REST_UPLOAD;
 
@@ -66,7 +67,7 @@ public class FileManagerApplicationTests {
 
         ResponseEntity<Void> result = restTemplate.postForEntity(REST_UPLOAD, parts, Void.class);
 
-        Assert.assertEquals(HttpStatus.CREATED,result.getStatusCode());
+        assertEquals(HttpStatus.CREATED,result.getStatusCode());
     }
 
     @Test
@@ -77,22 +78,22 @@ public class FileManagerApplicationTests {
         parts.add("file", new FileSystemResource(resource));
 
         ResponseEntity<Void> result = restTemplate.postForEntity(REST_UPLOAD, parts, Void.class);
-        Assert.assertEquals(HttpStatus.CREATED,result.getStatusCode());
+        assertEquals(HttpStatus.CREATED,result.getStatusCode());
         result = restTemplate.postForEntity(REST_UPLOAD, parts, Void.class);
-        Assert.assertEquals(HttpStatus.CREATED,result.getStatusCode());
+        assertEquals(HttpStatus.CREATED,result.getStatusCode());
     }
 
     @Test
     public void checkRestToRepository(){
         ResponseEntity<String> response = restTemplate.getForEntity(REST_REPOSITORY_FILES,String.class);
-        Assert.assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals(HttpStatus.OK,response.getStatusCode());
     }
 
     @Test
     public void checkAddToRepository(){
         FileMetadata fileMetadata = new FileMetadata(TEST_HASH,FileType.PHENOTYPE_FILE,1L);
         ResponseEntity<String> response = restTemplate.postForEntity(REST_REPOSITORY_FILES,fileMetadata,String.class);
-        Assert.assertEquals(HttpStatus.CREATED,response.getStatusCode());
+        assertEquals(HttpStatus.CREATED,response.getStatusCode());
 
     }
 
@@ -100,10 +101,8 @@ public class FileManagerApplicationTests {
     public void checkDoubleAddToRepository(){
         FileMetadata fileMetadata = new FileMetadata(TEST_HASH_REPEATED,FileType.PHENOTYPE_FILE,1L);
         ResponseEntity<String> response = restTemplate.postForEntity(REST_REPOSITORY_FILES,fileMetadata,String.class);
-        Assert.assertEquals(HttpStatus.CREATED,response.getStatusCode());
+        assertEquals(HttpStatus.CREATED,response.getStatusCode());
         response = restTemplate.postForEntity(REST_REPOSITORY_FILES,fileMetadata,String.class);
-        Assert.assertEquals(HttpStatus.CONFLICT,response.getStatusCode());
-        System.out.println(response.getStatusCode());
-        System.out.println(response.getBody());
+        assertEquals(HttpStatus.CONFLICT,response.getStatusCode());
     }
 }
