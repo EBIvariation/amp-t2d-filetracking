@@ -38,7 +38,7 @@ public class ExceptionHandling {
 
     @ExceptionHandler({IOException.class, StorageException.class})
     public ResponseEntity<ExceptionError> exceptionHandler(HttpServletRequest request, Exception exception) {
-        logger.error("Exception on rest call " + request.getRequestURI(), exception);
+        logger.error("Exception on REST call " + request.getRequestURI(), exception);
         return new ExceptionErrorResponseEntity("Internal server error", request, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

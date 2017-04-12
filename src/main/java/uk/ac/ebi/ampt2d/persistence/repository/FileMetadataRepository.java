@@ -24,7 +24,7 @@ import javax.transaction.Transactional;
 
 /**
  * Spring generated repository for accessing FileMetadata. This repository also includes the
- * {@link RepositoryRestResource} that configures spring to generate automatically a rest controller for the repository.
+ * {@link RepositoryRestResource} that configures spring to generate automatically a REST controller for the repository.
  */
 @RepositoryRestResource(collectionResourceRel = "files", path = FileMetadataRepository.REST_REPOSITORY_FILES)
 @Transactional
