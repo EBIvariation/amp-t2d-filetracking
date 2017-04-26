@@ -44,7 +44,7 @@ public class FileTrackingService {
 
     @Autowired
     public FileTrackingService(FileMetadataRepository fileMetadataRepository, FileSystemStorageService
-            fileSystemStorageService){
+            fileSystemStorageService) {
         this.fileMetadataRepository = fileMetadataRepository;
         this.fileSystemStorageService = fileSystemStorageService;
     }
@@ -52,21 +52,34 @@ public class FileTrackingService {
     public FileMetadata addFile(InputStream inputStream) throws StorageException, IOException {
         SourceFilePath sourceFilePath = fileSystemStorageService.store(inputStream);
         String fileHash = null;
+        FileMetadata storedFileMetadata = null;
         try {
+            storedFileMetadata = storeTemporalFileMetadata(sourceFilePath);
             fileHash = fileSystemStorageService.getFileHash(sourceFilePath);
-            long fileSize = fileSystemStorageService.getFileSize(sourceFilePath);
-
-            FileMetadata fileMetadata = new FileMetadata(fileHash, FileType.BINARY, fileSize);
-            fileMetadata.addSourceFilePaths(sourceFilePath);
-            return fileMetadataRepository.save(fileMetadata);
-        } catch (IOException e){
-            fileSystemStorageService.delete(sourceFilePath);
+            storedFileMetadata.setHash(fileHash);
+            return fileMetadataRepository.save(storedFileMetadata);
+        } catch (IOException e) {
+            deleteFileMetadata(storedFileMetadata);
             throw e;
         } catch (DataIntegrityViolationException e) {
-            // Duplicated file, we delete the last stored.
-            fileSystemStorageService.delete(sourceFilePath);
+            // Duplicated file, we delete the entry and return the existing one.
+            deleteFileMetadata(storedFileMetadata);
             return fileMetadataRepository.findByHash(fileHash);
         }
+    }
+
+    private void deleteFileMetadata(FileMetadata storedFileMetadata) {
+        for(SourceFilePath sourceFilePath: storedFileMetadata.getSourceFilePaths()){
+            fileSystemStorageService.delete(sourceFilePath);
+        }
+        fileMetadataRepository.delete(storedFileMetadata);
+    }
+
+    private FileMetadata storeTemporalFileMetadata(SourceFilePath sourceFilePath) throws IOException {
+        long fileSize = fileSystemStorageService.getFileSize(sourceFilePath);
+        FileMetadata tempFileMetadata = new FileMetadata(FileType.BINARY, fileSize);
+        tempFileMetadata.addSourceFilePaths(sourceFilePath);
+        return fileMetadataRepository.save(tempFileMetadata);
     }
 
 }
