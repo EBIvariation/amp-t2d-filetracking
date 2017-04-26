@@ -15,15 +15,19 @@
  */
 package uk.ac.ebi.ampt2d.rest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ControllerUtils;
+import org.springframework.data.rest.webmvc.HttpHeadersPreparer;
+import org.springframework.data.rest.webmvc.PersistentEntityResource;
+import org.springframework.data.rest.webmvc.PersistentEntityResourceAssembler;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import uk.ac.ebi.ampt2d.persistence.entities.FileMetadata;
 import uk.ac.ebi.ampt2d.services.FileTrackingService;
 import uk.ac.ebi.ampt2d.storage.exceptions.StorageException;
 
@@ -33,20 +37,28 @@ import java.io.IOException;
  * Rest controller for the file tracking. This controller doesn't show the repository operations, that controller is
  * generated automatically by spring
  */
-@RestController
+@RepositoryRestController
+@RequestMapping("/") //Required when using @RepositoryRestController (not stated in docs)
 public class FileTrackingController {
 
     public static final String REST_UPLOAD = "/upload";
-    private final Logger logger = LoggerFactory.getLogger(ExceptionHandling.class);
 
-    @Autowired
     private FileTrackingService fileTrackingService;
 
-    @PostMapping(REST_UPLOAD)
-    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile multipartFile) throws
-            IOException, StorageException {
-        fileTrackingService.addFile(multipartFile.getInputStream());
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    private final HttpHeadersPreparer headersPreparer;
+
+    @Autowired
+    public FileTrackingController(FileTrackingService fileTrackingService, HttpHeadersPreparer headersPreparer) {
+        this.fileTrackingService = fileTrackingService;
+        this.headersPreparer = headersPreparer;
     }
 
+    @PostMapping(REST_UPLOAD)
+    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile multipartFile ,
+                                    final PersistentEntityResourceAssembler assembler)
+            throws IOException, StorageException {
+        FileMetadata fileMetadata = fileTrackingService.addFile(multipartFile.getInputStream());
+        PersistentEntityResource resource = assembler.toResource(fileMetadata);
+        return ControllerUtils.toResponseEntity(HttpStatus.CREATED,headersPreparer.prepareHeaders(resource), resource);
+    }
 }

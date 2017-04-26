@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.ampt2d.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -34,27 +36,36 @@ import java.io.InputStream;
 @Service
 public class FileTrackingService {
 
-    @Autowired
+    private static final Logger logger = LoggerFactory.getLogger(FileTrackingService.class);
+
     private FileMetadataRepository fileMetadataRepository;
 
-    @Autowired
     private FileSystemStorageService fileSystemStorageService;
 
-    public void addFile(InputStream inputStream) throws StorageException, IOException {
+    @Autowired
+    public FileTrackingService(FileMetadataRepository fileMetadataRepository, FileSystemStorageService
+            fileSystemStorageService){
+        this.fileMetadataRepository = fileMetadataRepository;
+        this.fileSystemStorageService = fileSystemStorageService;
+    }
+
+    public FileMetadata addFile(InputStream inputStream) throws StorageException, IOException {
         SourceFilePath sourceFilePath = fileSystemStorageService.store(inputStream);
+        String fileHash = null;
         try {
-            String fileHash = fileSystemStorageService.getFileHash(sourceFilePath);
+            fileHash = fileSystemStorageService.getFileHash(sourceFilePath);
             long fileSize = fileSystemStorageService.getFileSize(sourceFilePath);
 
             FileMetadata fileMetadata = new FileMetadata(fileHash, FileType.BINARY, fileSize);
             fileMetadata.addSourceFilePaths(sourceFilePath);
-            fileMetadataRepository.save(fileMetadata);
+            return fileMetadataRepository.save(fileMetadata);
         } catch (IOException e){
             fileSystemStorageService.delete(sourceFilePath);
             throw e;
         } catch (DataIntegrityViolationException e) {
-            // Duplicated file, we delete the new stored file.
+            // Duplicated file, we delete the last stored.
             fileSystemStorageService.delete(sourceFilePath);
+            return fileMetadataRepository.findByHash(fileHash);
         }
     }
 

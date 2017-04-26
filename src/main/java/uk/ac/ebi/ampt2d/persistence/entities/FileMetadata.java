@@ -16,7 +16,7 @@
 package uk.ac.ebi.ampt2d.persistence.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -57,20 +57,18 @@ public class FileMetadata {
     @GeneratedValue
     private long id;
 
-    @JsonView
     @Column(length = MAX_FILE_HASH_LENGTH, unique = true)
     @Size(min = MIN_FILE_HASH_LENGTH, max = MAX_FILE_HASH_LENGTH)
     private String hash;
 
-    @JsonView
+    @JsonUnwrapped
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FileType fileType;
 
-    @JsonView
     private long size;
 
-    @JsonManagedReference
+    @JsonManagedReference()
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fileMetadata", fetch = FetchType.EAGER)
     private final Set<SourceFilePath> sourceFilePaths;
 
@@ -82,15 +80,24 @@ public class FileMetadata {
     @Column(nullable = false)
     private LocalDateTime lastModifiedDate;
 
+    private FileMetadata() {
+        this(null, null, -1L);
+
+    }
+
+    public FileMetadata(FileType fileType) {
+        this(null, fileType, -1L);
+    }
+
     public FileMetadata(String hash, FileType fileType, long size) {
-        this();
+        sourceFilePaths = new LinkedHashSet<>();
         this.hash = hash;
         this.fileType = fileType;
         this.size = size;
     }
 
-    private FileMetadata() {
-        sourceFilePaths = new LinkedHashSet<>();
+    public long getId() {
+        return id;
     }
 
     public String getHash() {
@@ -118,4 +125,11 @@ public class FileMetadata {
         return lastModifiedDate;
     }
 
+    public FileType getFileType() {
+        return fileType;
+    }
+
+    public long getSize() {
+        return size;
+    }
 }

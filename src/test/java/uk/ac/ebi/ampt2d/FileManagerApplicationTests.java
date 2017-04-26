@@ -93,6 +93,6 @@ public class FileManagerApplicationTests {
         ResponseEntity<String> response = restTemplate.postForEntity(REST_REPOSITORY_FILES,fileMetadata,String.class);
         assertEquals(HttpStatus.CREATED,response.getStatusCode());
         response = restTemplate.postForEntity(REST_REPOSITORY_FILES,fileMetadata,String.class);
-        assertEquals(HttpStatus.CONFLICT,response.getStatusCode());
+        assertEquals(HttpStatus.CREATED,response.getStatusCode());
     }
 }

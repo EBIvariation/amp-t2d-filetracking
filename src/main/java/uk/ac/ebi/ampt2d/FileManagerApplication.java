@@ -20,18 +20,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import uk.ac.ebi.ampt2d.rest.FileTrackingController;
 import uk.ac.ebi.ampt2d.storage.StorageProperties;
 
 /**
  * Register Springs JSR310 JPA converters for mapping of LocalDateTime in postgresql.
- *
+ * <p>
  * See <a href="https://spring.io/blog/2015/03/26/what-s-new-in-spring-data-fowler#jsr-310-and-threeten-backport-support">spring.io blog</a>
  * See <a href="http://stackoverflow.com/questions/29517508/how-to-persist-jsr-310-types-with-spring-data-jpa/29542062#29542062"> stackoverflow QA</a>
  */
 @EntityScan(
-        basePackageClasses = {FileManagerApplication.class, Jsr310JpaConverters.class}
+        basePackageClasses = {FileManagerApplication.class, FileTrackingController.class, Jsr310JpaConverters.class}
 )
 @SpringBootApplication
+@EnableJpaRepositories
 @EnableConfigurationProperties(StorageProperties.class)
 public class FileManagerApplication {
 
