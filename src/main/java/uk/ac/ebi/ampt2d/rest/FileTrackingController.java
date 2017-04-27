@@ -54,11 +54,12 @@ public class FileTrackingController {
     }
 
     @PostMapping(REST_UPLOAD)
-    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile multipartFile ,
+    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile multipartFile,
                                     final PersistentEntityResourceAssembler assembler)
             throws IOException, StorageException {
         FileMetadata fileMetadata = fileTrackingService.addFile(multipartFile.getInputStream());
         PersistentEntityResource resource = assembler.toResource(fileMetadata);
-        return ControllerUtils.toResponseEntity(HttpStatus.CREATED,headersPreparer.prepareHeaders(resource), resource);
+        //Controller utils is a helper class used to build Response entities with a specific status, header and resource
+        return ControllerUtils.toResponseEntity(HttpStatus.CREATED, headersPreparer.prepareHeaders(resource), resource);
     }
 }

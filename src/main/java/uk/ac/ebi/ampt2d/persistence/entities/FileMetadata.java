@@ -61,7 +61,7 @@ public class FileMetadata {
     @Size(min = MIN_FILE_HASH_LENGTH, max = MAX_FILE_HASH_LENGTH)
     private String hash;
 
-    @JsonUnwrapped
+    @JsonUnwrapped //Required to avoid Jackson problems in some circumstances
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FileType fileType;
@@ -82,11 +82,6 @@ public class FileMetadata {
 
     private FileMetadata() {
         this(null, null, -1L);
-
-    }
-
-    public FileMetadata(FileType fileType) {
-        this(null, fileType, -1L);
     }
 
     public FileMetadata(String hash, FileType fileType, long size) {
