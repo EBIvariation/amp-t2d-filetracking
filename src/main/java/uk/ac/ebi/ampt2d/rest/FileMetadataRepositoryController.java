@@ -32,9 +32,9 @@ import uk.ac.ebi.ampt2d.persistence.repository.FileMetadataRepository;
 import static uk.ac.ebi.ampt2d.persistence.repository.FileMetadataRepository.REST_REPOSITORY_FILES;
 
 /**
- * Repository that overrides the default behaviour for the FileMetadata post.
+ * Repository that overrides the default behaviour for the FileMetadata POST method.
  * <p>
- * It is defined as {@link RepositoryRestController} instead of rest controller so that it can use properly the
+ * It is defined as {@link RepositoryRestController} instead of {@link RestController} so that it can use properly the
  * default configuration of spring data and heper beans.
  */
 @RepositoryRestController
@@ -46,7 +46,7 @@ public class FileMetadataRepositoryController {
 
     /**
      * Constructor injection of the controller bean. Please note the injection of {@link HttpHeadersPreparer} bean.
-     * This class is a spring-rest helper bean that is used to generate the header in the REST message responses.
+     * This class is a Spring Data REST helper bean used to generate the header in the REST message responses.
      *
      * @param fileMetadataRepository
      * @param headersPreparer
@@ -60,10 +60,10 @@ public class FileMetadataRepositoryController {
 
     /**
      * Proper method that handles POST operation of {@link FileMetadata}. It uses
-     * {@link PersistentEntityResourceAssembler} to generate the Hateoas messages. In Spring Hateoas you can create
-     * the message manually or externalize it to a {@link org.springframework.hateoas.ResourceAssembler}. Spring data
-     * rest uses the {@link PersistentEntityResourceAssembler} as a generic assembler to generate the appropriate
-     * Hateoas body message. Using this class ensures that we generate the same message as the standard repository.
+     * {@link PersistentEntityResourceAssembler} to generate HATEOAS messages. In Spring HATEOAS you can create
+     * the message manually or externalize it to a {@link org.springframework.hateoas.ResourceAssembler}. Spring Data
+     * REST uses the {@link PersistentEntityResourceAssembler} as a generic assembler to generate the appropriate
+     * HATEOAS body message. Using this class ensures that we generate the same message as the standard repository.
      *
      * @param fileMetadata
      * @param assembler
@@ -79,7 +79,7 @@ public class FileMetadataRepositoryController {
             storedFileMetadata = fileMetadataRepository.findByHash(fileMetadata.getHash());
         }
         PersistentEntityResource resource = assembler.toResource(storedFileMetadata);
-        //Controller utils is a helper class used to build Response entities with a specific status, header and resource
+        // ControllerUtils is a helper class used to build Response entities with a specific status, header and resource
         return ControllerUtils.toResponseEntity(HttpStatus.CREATED, headersPreparer.prepareHeaders(resource), resource);
     }
 }
