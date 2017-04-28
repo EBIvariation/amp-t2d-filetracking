@@ -54,11 +54,11 @@ public class FileTrackingService {
         String fileHash = null;
         FileMetadata storedFileMetadata = null;
         try {
-            storedFileMetadata = storeTemporalFileMetadata(sourceFilePath);
+            storedFileMetadata = storeTemporaryFileMetadata(sourceFilePath);
             fileHash = fileSystemStorageService.getFileHash(sourceFilePath);
-            storedFileMetadata.setHash(fileHash);
-            return fileMetadataRepository.save(storedFileMetadata);
+            return updateFileMetadataHash(fileHash, storedFileMetadata);
         } catch (IOException e) {
+            // Unexpected case. In case of error delete the stored data and report.
             deleteFileMetadata(storedFileMetadata);
             throw e;
         } catch (DataIntegrityViolationException e) {
@@ -68,14 +68,19 @@ public class FileTrackingService {
         }
     }
 
+    private FileMetadata updateFileMetadataHash(String fileHash, FileMetadata storedFileMetadata) {
+        storedFileMetadata.setHash(fileHash);
+        return fileMetadataRepository.save(storedFileMetadata);
+    }
+
     private void deleteFileMetadata(FileMetadata storedFileMetadata) {
-        for(SourceFilePath sourceFilePath: storedFileMetadata.getSourceFilePaths()){
+        for (SourceFilePath sourceFilePath : storedFileMetadata.getSourceFilePaths()) {
             fileSystemStorageService.delete(sourceFilePath);
         }
         fileMetadataRepository.delete(storedFileMetadata);
     }
 
-    private FileMetadata storeTemporalFileMetadata(SourceFilePath sourceFilePath) throws IOException {
+    private FileMetadata storeTemporaryFileMetadata(SourceFilePath sourceFilePath) throws IOException {
         long fileSize = fileSystemStorageService.getFileSize(sourceFilePath);
         FileMetadata tempFileMetadata = new FileMetadata(FileType.BINARY, fileSize);
         tempFileMetadata.addSourceFilePaths(sourceFilePath);
