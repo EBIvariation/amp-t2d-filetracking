@@ -84,6 +84,10 @@ public class FileMetadata {
         this(null, null, -1L);
     }
 
+    public FileMetadata(FileType fileType, long size) {
+        this(null, fileType, size);
+    }
+
     public FileMetadata(String hash, FileType fileType, long size) {
         sourceFilePaths = new LinkedHashSet<>();
         this.hash = hash;
@@ -97,6 +101,10 @@ public class FileMetadata {
 
     public String getHash() {
         return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 
     public Set<SourceFilePath> getSourceFilePaths() {
@@ -127,4 +135,5 @@ public class FileMetadata {
     public long getSize() {
         return size;
     }
+
 }
